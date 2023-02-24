@@ -170,6 +170,7 @@ public class MemberController {
 	@RequestMapping("login.me")
 	public ModelAndView loginMember(Member m, HttpSession session, ModelAndView mv) {
 		
+		/* * 암호화 작업 전에 했던 단순한 로그인 방법 
 		Member loginUser = mService.loginMember(m); 
 		
 		if(loginUser == null) {
@@ -179,7 +180,27 @@ public class MemberController {
 			session.setAttribute("loginUser", loginUser); 
 			mv.setViewName("redirect:/"); 
 		}
+		*/
 		
+		// * 암호화 적용 후 로그인 방법 
+		// 사용자가 입력한 아이디만을 가지고 우선 회원 조회해옴 
+		// 조회된 회원의 비번(암호문)이랑 사용자가 입력한 비번(평문)이랑 
+		// 일치하는 비교 (BCryptPasswordEncoder 의 matches메소드)
+		
+		Member loginUser = mService.loginMember(m); 
+		
+		// loginUser의 userPwd == 디비에 저장된 비번(암호문) 
+		// m의 userPwd == 로그인요청시 입력했던 비번(평문)
+		
+		if(loginUser != null && bcryptPasswordEncoder.matches(m.getUserPwd(), loginUser.getUserPwd())) {
+			// 로그인성공 
+			session.setAttribute("loginUser", loginUser); 
+			mv.setViewName("redirect:/"); 
+		}else {
+			// 로그인실패 
+			mv.addObject("errorMsg", "로그인 실패"); 
+			mv.setViewName("common/errorPage");
+		}
 		return mv; 
 	}
 	
@@ -198,7 +219,7 @@ public class MemberController {
 	}
 	
 	@RequestMapping("insert.me")
-	public String insertMember(Member m, Model model) {
+	public String insertMember(Member m, Model model, HttpSession session) {
 		//System.out.println(m); 
 		
 		//form의 submit이 post방식일 때, 요청시 전달값에 한글이 있을 경우 한글이 깨짐
@@ -240,7 +261,9 @@ public class MemberController {
 		
 		// 암호화작업 (암호문을 만들어내는 과정)
 		// System.out.println("평문 : " + m.getUserPwd()); 
+		
 		String encPwd = bcryptPasswordEncoder.encode(m.getUserPwd()); 
+		
 		// System.out.println("암호문 : " + encPwd ); 
 
 		m.setUserPwd(encPwd); //암호문으로 덮어씌우기 
@@ -249,6 +272,7 @@ public class MemberController {
 		
 		if(result > 0) { // 성공 => 메인페이지 
 			
+			session.setAttribute("alertMsg", "성공적으로 회원가입 되었습니다."); 
 			return "redirect:/"; 
 			
 		}else { // 실패 => 에러문구 담아서 에러페이지 포워딩 
@@ -257,5 +281,64 @@ public class MemberController {
 		}
 		
 	}
+	
+	@RequestMapping("myPage.me")
+	public String myPage() {
+		return "member/myPage";  
+	}
+	
+	@RequestMapping("update.me")
+	public String updateMember(Member m, HttpSession session, Model model) {
+		int result = mService.updateMember(m); 
+
+		if(result > 0) { // 수정 성공
+			
+			// 갱신된 회원 조회 => session 의 loginUser 변경 
+			Member updateMem = mService.loginMember(m); 
+			session.setAttribute("loginUser", updateMem);
+			
+			session.setAttribute("alertMsg", "성공적으로 회원정보 변경되었습니다."); 
+			
+			return "redirect:myPage.me"; 
+			
+		}else { // 수정 실패 
+			model.addAttribute("errorMsg", "회원정보 변경 실패"); 
+			return "common/errorPage"; 
+			
+		}
+	}
+	
+	@RequestMapping("delete.me")
+	public String deleteMember(String userPwd, String userId, HttpSession session, Model model) {
+		// userPwd매개변수 : 회원탈퇴요청시 사용자가 입력한 비번(평문) 
+		// session에 loginUser Member객체의 userPwd필드 : 디비로부터 조회된 비번(암호문)
+		String encPwd = ((Member)session.getAttribute("loginUser")).getUserPwd(); 
+		
+		if(bcryptPasswordEncoder.matches(userPwd, encPwd)) {
+			// 비번일치 == 본인 맞음 => 탈퇴처리 
+			int result = mService.deleteMember(userId); 
+			
+			if(result>0) { // 성공 => session에 loginUser지움, alert문구 담기 => 메인페이지url재요청 
+				session.removeAttribute("loginUser");
+				session.setAttribute("alertMsg", "성공적으로 탈퇴되었습니다. 그동안 이용해주셔서 감사합니다.");
+				
+				return "redirect:/"; 
+			}else { // 실패 => 에러문구담아서 에러페이지 포워딩 
+				model.addAttribute("errorMsg", "회원 탈퇴 실패"); 
+				
+				return "common/errorPage"; 
+			}
+			
+		}else {
+			// 비번틀림 == 본인 아님 => 비밀번호가 틀림을 알리고 마이페이지 
+			session.setAttribute("alertMsg", "비밀번호를 잘못 입력하셨습니다. 확인해주세요.");
+			return "redirect:myPage.me"; 
+		}
+		
+		 
+		
+	}
+	
+	
 	
 }

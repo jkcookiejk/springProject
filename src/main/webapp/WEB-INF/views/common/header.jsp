@@ -12,6 +12,16 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <!-- 부트스트랩에서 제공하고 있는 스크립트 -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<!-- Alertify JavaScript -->
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+<!-- CSS -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
+<!-- Bootstrap theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css"/>
 <style>
     div{box-sizing: border-box;}
     #header{
@@ -63,6 +73,14 @@
 </style>
 </head>
 <body>
+
+	<c:if test="${ not empty alertMsg }">
+		<script>
+			alertify.alert('${alertMsg}'); 
+		</script>
+		<c:remove var="alertMsg" scope="session" />
+	</c:if>
+
     <div id="header">
         <div id="header_1">
             <div id="header_1_left">
@@ -80,7 +98,7 @@
 	                	<!-- 로그인 후  -->
 		                <img src="<c:out value='${loginUser.profileImg }' default='resources/profile_images/defaultProfile.png' />">&nbsp;
 		                <span>${ loginUser.userName }님 환영합니다</span> &nbsp;|&nbsp;
-		                <a href="">마이페이지</a>
+		                <a href="myPage.me">마이페이지</a>
 		                <a href="logout.me">로그아웃</a>
 	                </c:otherwise>
                 </c:choose>
@@ -90,7 +108,7 @@
             <ul>
                 <li><a href="">HOME</a></li>
                 <li><a href="">공지사항</a></li>
-                <li><a href="">자유게시판</a></li>
+                <li><a href="list.bo">자유게시판</a></li>
                 <li><a href="">사진게시판</a></li>
             </ul>
         </div>

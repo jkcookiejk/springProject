@@ -36,7 +36,7 @@
 		   from member 
 		  where status = 'Y'
 		    and user_id = #{userId} 
-		    and user_pwd = #{userPwd}
+		    <!-- and user_pwd = #{userPwd} -->
 	</select> 
 	
 	<insert id="insertMember">
@@ -64,6 +64,26 @@
 		   , #{address}
 		   )
 	</insert>
+	
+	<update id="updateMember">
+		update
+			   member
+	       set user_name = #{userName}
+	         , email = #{email}
+	         , age = #{age}
+	         , phone = #{phone}
+	         , address = #{address}
+	         , gender = #{gender}
+	         , modify_date = sysdate
+	     where user_id = #{userId}
+	</update>
+	
+	<update id="deleteMember">
+		update
+		       member
+		   set status = 'N' 
+		 where user_id = #{userId} 
+	</update>
 	
 
 </mapper>
