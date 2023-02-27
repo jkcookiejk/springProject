@@ -21,4 +21,6 @@ public interface MemberService {
 	// 아이디 중복체크 서비스 (select)
 	int idCheck(String checkId); 
 	
+	//프로필이미지 변경용 서비스 (update)
+	int updateProfileImg(Member m); 
 }
