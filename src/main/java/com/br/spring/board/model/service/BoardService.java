@@ -30,6 +30,7 @@ public interface BoardService {
 	
 	// 7. 댓글 작성용 서비스 (ajax)
 	int insertReply(Reply r);
-		
 	
+	// [추가] 게시글 top5 조회용 서비스 (ajax)
+	ArrayList<Board> selectTopList();
 }

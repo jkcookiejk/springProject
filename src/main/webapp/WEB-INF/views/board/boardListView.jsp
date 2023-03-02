@@ -7,22 +7,22 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-  #boardList{text-align: center;}
-  #boardList>tbody>tr:hover{cursor:pointer;}
+	#boardList{text-align: center;}
+    #boardList>tbody>tr:hover{cursor:pointer;}
 
-  #pagingArea{width:fit-content;margin:auto;}
- 
-  #searchForm{
-      width:80%;
-      margin:auto;
-  }
-  #searchForm>*{
-      float:left;
-      margin:5px;
-  }
-  .select{width:20%;}
-  .text{width:53%;}
-  .searchBtn{Width:20%;}
+    #pagingArea{width:fit-content;margin:auto;}
+   
+    #searchForm{
+        width:80%;
+        margin:auto;
+    }
+    #searchForm>*{
+        float:left;
+        margin:5px;
+    }
+    .select{width:20%;}
+    .text{width:53%;}
+    .searchBtn{Width:20%;}
 </style>
 </head>
 <body>
@@ -131,6 +131,6 @@
 
     <!-- 이쪽에 푸터바 포함할꺼임 -->
     <jsp:include page="../common/footer.jsp"/>
-	
+
 </body>
 </html>

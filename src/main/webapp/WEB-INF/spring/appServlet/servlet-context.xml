@@ -3,7 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+		http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -24,34 +26,45 @@
 	<context:component-scan base-package="com.br.spring" />
 	
 	<!-- 
-		* HandlerMapping 등록 
-		  -> 요청 url과 매칭되는 Controller를 검색하는 역할을 함 
-	 -->	
+		* HandlerMapping 등록
+		  -> 요청 url과 매칭되는 Controller를 검색하는 역할을 함
+	-->
 	<!-- * xml방식 (장점:관리의 편의성 높음 / 단점:다수의 개발자가 수정시 문제발생) -->
 	<!-- 1) 실행시킬 Controller클래스를 빈으로 등록 -->
 	<!-- 
-	<beans:bean class="com.br.member.controller.LoginController" id="loginController" /> 
-	<beans:bean class="com.br.member.controller.LogoutController" id="logoutController" />
-	 -->
-	 
+	<beans:bean class="com.br.member.controller.LoginController" id="loginController"/>
+	<beans:bean class="com.br.member.controller.LogoutController" id="logoutController"/>
+	-->
+	
 	<!-- 2) 위의 Controller와 매칭되는 HandlerMapping등록 -->
-	<!-- 
-	<beans:bean class="org.springframwork.web.servlet.handler.SimpleUrlHandlerMapping">
+	<!--  
+	<beans:bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<beans:property name="mappings">
-			<benas:props>
+			<beans:props>
 				<beans:prop key="login.me">loginController</beans:prop>
 				<beans:prop key="logout.me">logoutController</beans:prop>
-			</benas:props>
+			</beans:props>
 		</beans:property>
-	</beans:bean>
+	</beans:bean>	
 	-->
 	
 	<interceptors>
 		<interceptor>
 			<mapping path="/myPage.me"/>
-			<mapping path="/enrollForm.bo"/> 
-			<beans:bean class="com.br.spring.common.interceptor.LoginInterceptor" id="loginInterceptor" /> 
+			<mapping path="/enrollForm.bo"/>
+			<beans:bean class="com.br.spring.common.interceptor.LoginInterceptor" id="loginInterceptor"/>
 		</interceptor>
 	</interceptors>
-
+	
+	<!-- websocket 관련 구문 추가 -->
+	<beans:bean id="chatEchoHandler" class="com.br.spring.chat.controller.ChatEchoHandler"/>
+	<websocket:handlers>
+		<websocket:mapping handler="chatEchoHandler" path="/chat" /> <!-- /spring/chat url요청시 -->
+		<!-- HttpSession 데이터를 사용할 수 있도록 설정 -->
+		<websocket:handshake-interceptors>
+			<beans:bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"/> 
+		</websocket:handshake-interceptors>
+		<websocket:sockjs />
+	</websocket:handlers>
+	
 </beans:beans>

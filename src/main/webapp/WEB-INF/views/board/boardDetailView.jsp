@@ -7,8 +7,8 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-table *{margin:5px;}
-table{width:100%;}
+	table *{margin:5px;}
+    table{width:100%;}
 </style>
 </head>
 <body>
@@ -71,49 +71,106 @@ table{width:100%;}
 	            
 	            <script>
 	            	function postFormSubmit(num){
-	            		if(num == 1){ // 수정하기클릭시 
-	            			$("#postForm").attr("action", "updateForm.bo").submit(); 
-	            		}else{ // 삭제하기클릭시 
-	            			$("#postForm").attr("action", "delete.bo").submit(); 
+	            		if(num == 1){ // 수정하기클릭시
+	            			$("#postForm").attr("action", "updateForm.bo").submit();
+	            		}else{ // 삭제하기클릭시
+	            			$("#postForm").attr("action", "delete.bo").submit();
 	            		}
 	            	}
 	            </script>
+	            
             </c:if>
 
             <!-- 댓글 기능은 나중에 ajax 배우고 접목시킬예정! 우선은 화면구현만 해놓음 -->
             <table id="replyArea" class="table" align="center">
                 <thead>
+                	<c:choose>
+	                	<c:when test="${ empty loginUser }">
+		                    <tr>
+		                        <th colspan="2">
+		                            <textarea class="form-control" cols="55" rows="2" style="resize:none; width:100%" readonly>로그인한 사용자만 이용가능한 서비스입니다. 로그인 후 이용바랍니다.</textarea>
+		                        </th>
+		                        <th style="vertical-align: middle"><button class="btn btn-secondary" disabled>등록하기</button></th>
+		                    </tr>
+	                    </c:when>
+	                    <c:otherwise>
+		                    <tr>
+		                        <th colspan="2">
+		                            <textarea class="form-control" id="content" cols="55" rows="2" style="resize:none; width:100%"></textarea>
+		                        </th>
+		                        <th style="vertical-align: middle"><button class="btn btn-secondary" onclick="addReply();">등록하기</button></th>
+		                    </tr>
+	                    </c:otherwise>
+                    </c:choose>
+                    
                     <tr>
-                        <th colspan="2">
-                            <textarea class="form-control" name="" id="content" cols="55" rows="2" style="resize:none; width:100%"></textarea>
-                        </th>
-                        <th style="vertical-align: middle"><button class="btn btn-secondary">등록하기</button></th>
-                    </tr>
-                    <tr>
-                       <td colspan="3">댓글 (<span id="rcount">3</span>) </td> 
+                       <td colspan="3">댓글 (<span id="rcount"></span>) </td> 
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th>user02</th>
-                        <td>댓글입니다.너무웃기다앙</td>
-                        <td>2020-04-10</td>
-                    </tr>
-                    <tr>
-                        <th>user01</th>
-                        <td>많이봐주세용</td>
-                        <td>2020-04-08</td>
-                    </tr>
-                    <tr>
-                        <th>admin</th>
-                        <td>댓글입니다ㅋㅋㅋ</td>
-                        <td>2020-04-02</td>
-                    </tr>
                 </tbody>
             </table>
         </div>
         <br><br>
     </div>
+    
+    <script>
+    	$(function(){
+    		selectReplyList();
+    	})
+    	
+    	function addReply(){ // 댓글 작성용 ajax
+    		
+    		if($("#content").val().trim().length > 0){ // 유효한 댓글 작성시 => insert ajax요청
+    			
+    			$.ajax({
+    				url:"rinsert.bo",
+    				data:{
+    					replyContent:$("#content").val(),
+    					replyWriter:'${loginUser.userId}',
+    					refBoardNo:${b.boardNo}
+    				},success:function(result){
+    					if(result == "success"){
+    						$("#content").val("");
+    						selectReplyList();
+    					}
+    				},error:function(){
+    					console.log("댓글 작성용 ajax 통신 실패");
+    				}
+    			})
+    			
+    			
+    		}else{
+    			alertify.alert("댓글 작성 후 등록 요청해주세요");
+    		}
+    			
+    	}
+    	
+    	function selectReplyList(){ // 해당 게시글에 딸린 댓글리스트 조회용 ajax
+    		$.ajax({
+    			url:"rlist.bo",
+    			data:{no:${b.boardNo}},
+    			success:function(list){
+    				console.log(list);
+    				
+    				let value = "";
+    				for(let i=0; i<list.length; i++){
+    					value += "<tr>"
+    							+	"<th>" + list[i].replyWriter + "</th>"
+    							+	"<td>" + list[i].replyContent + "</td>"
+    							+	"<td>" + list[i].createDate + "</td>"
+    							+"</tr>";
+    				}
+    				
+    				$("#replyArea tbody").html(value);
+    				$("#rcount").text(list.length);
+    				
+    			},error:function(){
+    				console.log("댓글리스트 조회용 ajax 통신 실패");
+    			}
+    		})
+    	}
+    </script>
 
     <!-- 이쪽에 푸터바 포함할꺼임 -->
     <jsp:include page="../common/footer.jsp"/>

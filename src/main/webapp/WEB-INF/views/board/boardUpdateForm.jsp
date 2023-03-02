@@ -7,12 +7,12 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-#updateForm>table{width:100%;}
-#updateForm>table *{ margin:5px;}
+	#updateForm>table{width:100%;}
+    #updateForm>table *{ margin:5px;}
 </style>
 </head>
 <body>
-	    <!-- 이쪽에 메뉴바 포함 할꺼임 -->
+	<!-- 이쪽에 메뉴바 포함 할꺼임 -->
     <jsp:include page="../common/header.jsp"/>
 
     <div class="content">
@@ -22,7 +22,7 @@
             <br>
 
             <form id="updateForm" method="post" action="update.bo" enctype="multipart/form-data">
-            	<input type="hidden" name="boardNo" value="${b.boardNo }"> 
+                <input type="hidden" name="boardNo" value="${ b.boardNo }">
                 <table align="center">
                     <tr>
                         <th><label for="title">제목</label></th>
@@ -37,14 +37,12 @@
                         <td>
                             <input type="file" id="upfile" class="form-control-file border" name="reupfile">
                             
-                            <c:if test="${ not empty b.originName}">
-                            	현재 업로드된 파일 : 
-                            	<a href="${ b.changeName }" download="${b.originName }">${ b.originName }</a>
-                            	
-                            	<input type="hidden" name="originName" value="${b.originName }">
-                            	<input type="hidden" name="changeName" value="${b.changeName }">
+                            <c:if test="${ not empty b.originName }">
+	                            현재 업로드된 파일 : 
+	                            <a href="${ b.changeName }" download="${ b.originName }">${ b.originName }</a>
                             
-                            
+                            	<input type="hidden" name="originName" value="${ b.originName }">
+                            	<input type="hidden" name="changeName" value="${ b.changeName }">
                             </c:if>
                         </td>
                     </tr>
@@ -52,7 +50,7 @@
                         <th colspan="2"><label for="content">내용</label></th>
                     </tr>
                     <tr>
-                        <th colspan="2"><textarea class="form-control" required name="boardContent" id="content" rows="10" style="resize:none;">${b.boardContent }</textarea></th>
+                        <th colspan="2"><textarea class="form-control" required name="boardContent" id="content" rows="10" style="resize:none;">${ b.boardContent }</textarea></th>
                     </tr>
                 </table>
                 <br>

@@ -7,25 +7,25 @@ import org.springframework.stereotype.Service;
 import com.br.spring.member.model.dao.MemberDao;
 import com.br.spring.member.model.vo.Member;
 
-@Service 
+@Service
 public class MemberServiceImpl implements MemberService {
-
+	
 	@Autowired
-	private SqlSessionTemplate sqlSession; //선언만해서 null일것 같지만 나름대로 생성된 객체가 대입될 거임
+	private SqlSessionTemplate sqlSession;
 	
-	@Autowired 
+	@Autowired
 	private MemberDao mDao;
-	
+
 	@Override
 	public Member loginMember(Member m) {
-		Member loginUser = mDao.loginMember(sqlSession, m); 
-		return loginUser; 
+		Member loginUser = mDao.loginMember(sqlSession, m);
+		return loginUser;
 	}
 
 	@Override
 	public int insertMember(Member m) {
-		int result = mDao.insertMember(sqlSession, m); 
-		return result; 
+		int result = mDao.insertMember(sqlSession, m);
+		return result;		
 	}
 
 	@Override
@@ -37,18 +37,15 @@ public class MemberServiceImpl implements MemberService {
 	public int deleteMember(String userId) {
 		return mDao.deleteMember(sqlSession, userId);
 	}
-	
 
 	@Override
 	public int idCheck(String checkId) {
-		return mDao.idCheck(sqlSession, checkId);  
-	
+		return mDao.idCheck(sqlSession, checkId);
 	}
 
 	@Override
 	public int updateProfileImg(Member m) {
-		return mDao.updateProfile(sqlSession, m); 
+		return mDao.updateProfileImg(sqlSession, m);
 	}
-
 
 }
